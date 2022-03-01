@@ -28,7 +28,7 @@ class _360CC(data.Dataset):
             for c in contents:
                 imageName = c.split(' ')[0]
                 indices = c.split(' ')[1:]
-                string = ''.join([char_file[int(idx)] for idx in indices])
+                string = ''.join([char_dict[int(idx)] for idx in indices])
                 self.labels.append({imageName: string})
         print("load {} images~!".format(self.__len__()))
 
@@ -83,3 +83,4 @@ if __name__ == '__main__':
     # image = (image/255. - 0.588) / 0.193
     # image = image.transpose([2,0,1])
     # print(image)
+    #
