@@ -32,3 +32,12 @@ def create_log_folder(dataset):
     tensorboard_log_dir.mkdir(parents = True, exist_ok = True)
 
     return {'chs_dir':str (checkpoints_output_dir), 'tb_dir':str(checkpoints_output_dir)}
+
+def get_batch_label(dataset, index):
+    label = []
+    for idx in index:
+        label.append(list(dataset.labels[idx].values())[0])
+    return label
+
+class strLabelConverter(object):
+    pass
