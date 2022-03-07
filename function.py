@@ -23,7 +23,7 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
-def train(train_loader, dataset, converter, model, criterion, optimizer, device, epoch, writer_dict = None, output_dict = None):
+def train(train_loader, dataset, converter, model, criterion, optimizer, device, epoch, writer_dict, output_dict = None):
     print_freq = 10
     batch_time = AverageMeter()
     data_time = AverageMeter()
@@ -72,4 +72,66 @@ def train(train_loader, dataset, converter, model, criterion, optimizer, device,
                 writer_dict['train_global_steps'] = global_steps + 1
 
         end = time.time()
+
+def validate(val_loader, dataset, converter, model, criterion, device, epoch, writer_dict, output_dict):
+    losses = AverageMeter()
+    model.eval()
+    print_freq = 10
+    num_test_batch = 1000
+    num_test_disp = 10
+    batch_size_per_gpu = 16
+
+    n_correct = 0
+    with torch.no_grad():
+        for i, (input, idx) in enumerate(val_loader):
+            labels = utils.get_batch_label(dataset, idx)
+            input = input.to(device)
+
+            #inference
+            preds = model(input).cpu()
+
+            #compute loss
+            batch_size = input.size(0)
+            text, length = converter.encode(labels)
+            preds_size = torch.IntTensor([preds.size(0)] * batch_size)
+            loss = criterion(preds, text, preds_size, length)
+
+            losses.update(loss.item(), input.size(0))
+            _, preds = preds.max(2)
+            preds = preds.transpose(1, 0).contiguous().view(-1)
+            """The view() function can only be used on contiguous variables, that is, variables that occupy a continuous block of memory. 
+            Because some tensor does not occupy a whole block of memory, but is composed of different data blocks, and the view() operation 
+            of tensor depends on the whole block of memory, then only need to execute the contiguous() function to turn the tensor into 
+            In the form of a contiguous distribution in memory,"""
+
+            sim_preds = converter.decode(preds.data, preds_size.data, raw = False)
+            for pred, target in zip(sim_preds, labels):
+                if pred == target:
+                    n_correct += 1
+
+                if (i + 1) % print_freq == 0:
+                    print('Epoch: [{0}][{1}/{2}]'.format(epoch, i, len(val_loader)))
+
+                if i == num_test_batch:
+                    break
+
+    raw_preds = converter.decode(preds.data, preds_size.data, raw = True)[:num_test_disp]
+    for raw_pred, pred, gt in zip(raw_preds, sim_preds, labels):
+        print('%-20s => %-20s, gt: %-20s' % (raw_pred, pred, gt)) # raw_pred: predicted single string ; pred: complete sentences consisting all of predicted single string ; gt: Actual Label Sentences
+
+    num_test_sample = num_test_batch * batch_size_per_gpu
+    if num_test_sample > len(dataset):
+        num_test_sample = len(dataset)
+
+    print("[#correct:{} / #total:{}]".format(n_correct, num_test_sample))
+    accuracy = n_correct / float(num_test_sample)
+    print('Test Loss: {:.4f}, accuracy:{:.4f}'.format(losses.avg, accuracy))
+
+    if writer_dict:
+        writer = writer_dict['writer']
+        global_steps = writer_dict['valid_global_steps']
+        writer.add_scalar('valid_acc', accuracy, global_steps)
+        writer_dict['valid_global_steps'] = global_steps + 1
+
+    return accuracy
 
