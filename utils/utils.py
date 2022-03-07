@@ -13,14 +13,14 @@ def get_optimizer(model):
 
     return optimimzer
 
-def create_log_folder(dataset):
+def create_log_folder():
     root_out_dir = Path('output')
     #set up logger
     if not root_out_dir.exists():
         print('=> creating {}'.format(root_out_dir))
         root_out_dir.mkdir()
 
-    dataset = dataset
+    dataset = '360CC'
     model = 'crnn'
     time_str = time.struct_time('%Y-%m-%d-%H-%M')
     checkpoints_output_dir = root_out_dir / dataset / model / time_str / 'checkpoints'
