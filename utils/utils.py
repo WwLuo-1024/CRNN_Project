@@ -22,7 +22,7 @@ def create_log_folder():
 
     dataset = '360CC'
     model = 'crnn'
-    time_str = time.struct_time('%Y-%m-%d-%H-%M')
+    time_str = time.strftime('%Y-%m-%d-%H-%M')
     checkpoints_output_dir = root_out_dir / dataset / model / time_str / 'checkpoints'
 
     print('=> creating{}'.format(checkpoints_output_dir))
