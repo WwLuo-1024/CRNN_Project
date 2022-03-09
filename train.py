@@ -121,7 +121,7 @@ def main():
     best_acc = 0.5
     converter = utils.strLabelConverter(alphabets.alphabet)
     for epoch in range(last_epoch, train_end_epoch):
-        function.train(train_loader, train_dataset, converter, model, criterion, device, epoch, writer_dict, output_dict)
+        function.train(train_loader, train_dataset, converter, model, criterion,optimizer, device, epoch, writer_dict, output_dict)
         lr_scheduler.step()
         acc = function.validate(val_loader, val_dataset, converter, model, criterion, device, epoch, writer_dict, output_dict)
         is_best = acc > best_acc
