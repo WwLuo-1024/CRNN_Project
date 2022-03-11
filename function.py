@@ -32,17 +32,17 @@ def train(train_loader, dataset, converter, model, criterion, optimizer, device,
     model.train()
 
     end = time.time()
-    for i, (input, idx) in enumerate(train_loader):
+    for i, (inp, idx) in enumerate(train_loader):
         #measure data time
         data_time.update(time.time() - end)
         labels = utils.get_batch_label(dataset, idx)
-        input = input.to(device)
+        inp = inp.to(device)
 
         #inference
-        preds = model(input).cpu()
+        preds = model(inp).cpu()
 
         #compute loss
-        batch_size = input.size(0)
+        batch_size = inp.size(0)
         text, length = converter.encode(labels) # length = 一个batch中的总字符长度, text = 一个batch中的字符所对应的下标
         preds_size = torch.IntTensor([preds.size(0)] * batch_size) # timestep * bat
         loss = criterion(preds, text, preds_size, length)
@@ -61,7 +61,7 @@ def train(train_loader, dataset, converter, model, criterion, optimizer, device,
                   'Data : {data_time.val:.3f}s ({data_time.avg:.3f}s)\t' \
                   'Loss : {loss.val:.5f} ({loss.avg:.5f})\t'.format(
                 epoch, i, len(train_loader), batch_time = batch_time,
-                speed = input.size(0) / batch_time.val,
+                speed = inp.size(0) / batch_time.val,
                 data_time = data_time, loss = losses)
             print(msg)
 

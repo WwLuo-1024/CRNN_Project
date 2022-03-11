@@ -6,7 +6,7 @@ import cv2
 
 class _360CC(data.Dataset):
     def __init__(self, is_train = True):
-        self.root = "Dataset/data/image"
+        self.root = "D:/AI_Project/OCRTest/train_code/train_crnn/train_data/data"
         self.is_trian = is_train
         self.input_height = 32
         self.input_width = 160 #resized width
@@ -36,21 +36,23 @@ class _360CC(data.Dataset):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        image_name = list(self.labels[idx].keys())[0]
-        image = cv2.imread(os.path.join(self.root, image_name))
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        img_name = list(self.labels[idx].keys())[0]
+        img = cv2.imread(os.path.join(self.root, img_name))
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        image_h, image_w = image.shape
-        #data preprocessing
-        image = cv2.resize(image, (0,0), fx=self.input_width/image_w, fy = self.input_height / image_h) #cv2.resize(img, (0, 0), fx=2, fy=1) 功能：使得图像x轴变化为原来的2倍，y轴不变
-        image = np.reshape(image, (self.input_height, self.input_width, 1))
-        image = image.astype(np.float32)
-        image = (image/255. - self.mean) / self.std
-        image = image.transpose([2,0,1])
-        return image, idx
+        img_h, img_w = img.shape
 
-if __name__ == '__main__':
-    pass
+        img = cv2.resize(img, (0,0), fx=self.input_width / img_w, fy=self.input_height / img_h, interpolation=cv2.INTER_CUBIC)
+        img = np.reshape(img, (self.input_height, self.input_width, 1))
+
+        img = img.astype(np.float32)
+        img = (img/255. - self.mean) / self.std
+        img = img.transpose([2, 0, 1])
+
+        return img, idx
+
+# if __name__ == '__main__':
+#     pass
     #测试打印字典
     # char_file = "./data/image"  # data dictionary
     # with open(char_file, 'rb') as file:

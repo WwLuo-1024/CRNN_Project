@@ -24,6 +24,7 @@ def main():
     test_batch_size_per_gpu = 16
     num_worker = 1
     train_end_epoch = 100
+    num_class = len(alphabets.alphabet)
 
     #create output folder
     output_dict = utils.create_log_folder()
@@ -45,7 +46,7 @@ def main():
     }
 
     # construct face relatede
-    model = crnn.get_crnn(num_classes = 0)
+    model = crnn.get_crnn(num_classes = num_class)
 
     #get device
     if torch.cuda.is_available():
