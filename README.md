@@ -1,6 +1,14 @@
 # CRNN_Project
 CRNN PROJECT
 
+
+## TODO
+- [x] Completed training on 3.6 million data to achieve 96% accuracy
+- [ ] Provide training interface to individual datasets
+- [ ] Merging CTPN for complete OCR recognition
+- [ ] Provide ID card identification interface
+- [ ] Provide business licence identification interface
+
 ## Dev Environments
 1. WIN 10 or Ubuntu 16.04
 2. PyTorch 
@@ -23,3 +31,8 @@ CRNN PROJECT
 </div>
 
 Note: The ID card numbers appearing in the pictures above are home-made ID card data set numbers (not real resident ID card numbers).
+
+## Reference
+- https://github.com/meijieru/crnn.pytorch
+- https://github.com/Sierkinhane/CRNN_Chinese_Characters_Rec
+- https://github.com/PaddlePaddle/PaddleOCR
