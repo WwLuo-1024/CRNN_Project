@@ -30,7 +30,7 @@ CRNN PROJECT
     <img src="demo/002.png" width="800">
 </div>
 
-Note: The ID card numbers appearing in the pictures above are home-made ID card data set numbers (not real resident ID card numbers).
+Note: The ID card numbers appearing in the pictures above are self-made ID card data set numbers (not real resident ID card numbers).
 
 ## Reference
 - https://github.com/meijieru/crnn.pytorch
